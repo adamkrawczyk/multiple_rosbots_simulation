@@ -11,11 +11,11 @@
   <arg name="laser_topic" default="/rosbot1/scan" />
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base_rosbot1" output="screen">
-    <rosparam file="$(find tutorial_pkg)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find tutorial_pkg)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find tutorial_pkg)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find multiple_rosbots_simulation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find multiple_rosbots_simulation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find multiple_rosbots_simulation)/config/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find multiple_rosbots_simulation)/config/global_costmap_params.yaml" command="load" />
-        <rosparam file="$(find tutorial_pkg)/config/trajectory_planner.yaml" command="load" />
+        <rosparam file="$(find multiple_rosbots_simulation)/config/trajectory_planner.yaml" command="load" />
     <!-- external params file that could be loaded into the move_base namespace -->
 
     <!-- reset frame_id parameters using user input data -->
