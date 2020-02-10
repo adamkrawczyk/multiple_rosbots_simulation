@@ -1,0 +1,35 @@
+#name rooms must be numerated consequently as room<num>  
+
+rooms_num: 5   #remember that is enumerated from 0 so if you have rooms [1,2] then your rooms_num is 3 
+rooms:
+  room0:
+    name: "base/return point" #if it's set to 0,0,0 robot will go back to start point 
+    x:    0
+    y:    0
+    angle: 0
+
+  room1:
+    name: "room1-name"
+    x:    10.936
+    y:    1.335
+    angle: 180
+
+  room2:
+    name: "room2-name"
+    x:    12.716 
+    y:    -5.346
+    angle: 0   
+
+  room3:
+    name: "room3-name"
+    x:    21.037 
+    y:    0.538
+    angle: 0
+
+  room4:
+    name: "room4-name"
+    x:    20.944 
+    y:    -4.993
+    angle: 0
+
+  

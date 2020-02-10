@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+	<!-- Launch world -->
+	<param name="use_sim_time" value="true" />
+	<arg name="world" default="empty" />
+	<arg name="paused" default="false" />
+	<arg name="use_sim_time" default="true" />
+	<arg name="gui" default="true" />
+	<arg name="headless" default="false" />
+	<arg name="debug" default="false" />
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="$(find multiple_rosbots_simulation)/worlds/husarion_flat_sonar_v2.world" />
+	</include>
+
+	<!-- map server with simul map -->
+	<arg name="map_file" default="$(find multiple_rosbots_simulation)/maps/husarion-flat-2.yaml" />
+	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" respawn="false" />
+	
+    
+    <!-- ROSBOT1 -->
+	<group ns="rosbot1">
+		<param name="tf_prefix" value="rosbot1" />
+
+
+        <arg name="x" default="0"/>
+        <arg name="y" default="1"/>
+        <arg name="z" default="0"/>
+        <arg name="roll" default="0"/>
+        <arg name="pitch" default="0"/>
+        <arg name="yaw" default="0"/>
+
+
+        <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml"/>
+        <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller"/>
+        <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+        <node name="rosbot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+            args="-urdf -param robot_description -model rosbot1
+              -x $(arg x) -y $(arg y) -z $(arg z)
+              -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+        <!-- <include file="$(find multiple_rosbots_simulation)/launch/move_base_rosbot1.launch" /> -->
+		<node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="0 0 0 3.14 0 0 rosbot1/base_link rosbot1/laser_frame 100" />
+		<node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
+	</group>
+
+
+    <!-- ROSBOT2 -->
+	<group ns="rosbot2">
+		<param name="tf_prefix" value="rosbot2" />
+
+        <arg name="robot_name" default="rosbot2"/>
+        <arg name="x" default="0"/>
+        <arg name="y" default="-1"/>
+        <arg name="z" default="0"/>
+        <arg name="roll" default="0"/>
+        <arg name="pitch" default="0"/>
+        <arg name="yaw" default="0"/>
+
+        <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml"/>
+        <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller"/>
+        <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+        <node name="rosbot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+            args="-urdf -param robot_description -model $(arg robot_name)
+              -x $(arg x) -y $(arg y) -z $(arg z)
+              -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+		<!-- <include file="$(find multiple_rosbots_simulation)/launch/move_base_rosbot2.launch" /> -->
+		<node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="0 0 0 3.14 0 0 $(arg robot_name)/base_link $(arg robot_name)/laser_frame 100" />
+		<!-- <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" /> -->
+	</group>
+
+    <include file="$(find multiple_rosbots_simulation)/launch/move_base_rosbot1.launch" />
+    <include file="$(find multiple_rosbots_simulation)/launch/move_base_rosbot2.launch" />
+    <!-- <include file="$(find multiple_rosbots_simulation)/launch/move_base_exp.launch" /> -->
+	<include file="$(find multiple_rosbots_simulation)/launch/amcl_only_rosbot1.launch" />
+    <include file="$(find multiple_rosbots_simulation)/launch/amcl_only_rosbot2.launch" />
+
+</launch>
